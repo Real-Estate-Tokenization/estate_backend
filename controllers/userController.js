@@ -39,11 +39,72 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAllUsersWithFilters = catchAsync(async (req, res, next) => {
+  // Build query
+  const queryObj = { ...req.query };
+  const excludedFields = ['page', 'sort', 'limit', 'fields'];
+  excludedFields.forEach(el => delete queryObj[el]);
+
+  // Advanced filtering
+  let queryStr = JSON.stringify(queryObj);
+  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+  
+  let query = User.find(JSON.parse(queryStr));
+
+  // Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('-createdAt');
+  }
+
+  // Field limiting
+  if (req.query.fields) {
+    const fields = req.query.fields.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+  // Pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
+
+  // Execute query
+  const users = await query;
+
+  res.status(200).json({
+    status: 'success',
+    results: users.length,
+    data: {
+      users
+    }
+  });
+});
+
 exports.getUser = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
     return next(new AppError('No user found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user
+    }
+  });
+});
+
+exports.getUserByEthAddress = catchAsync(async (req, res, next) => {
+  const { ethAddress } = req.params;
+
+  const user = await User.findOne({ ethAddress });
+
+  if (!user) {
+    return next(new AppError('No user found with that ETH address', 404));
   }
 
   res.status(200).json({
