@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 const Admin = require('../models/adminModel');
 const Node = require('../models/nodeModel');
 const catchAsync = require('../utils/catchAsync');
@@ -78,4 +79,29 @@ exports.nodeLogin = catchAsync(async (req, res, next) => {
   }
 
   createSendToken(node, 200, res);
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1) Get token and check if it exists
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(new AppError('You are not logged in! Please log in to get access.', 401));
+  }
+
+  // 2) Verify token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // 3) Check if admin still exists
+  const currentAdmin = await Admin.findById(decoded.id);
+  if (!currentAdmin) {
+    return next(new AppError('The admin belonging to this token no longer exists.', 401));
+  }
+
+  // Grant access to protected route
+  req.admin = currentAdmin;
+  next();
 });

@@ -8,6 +8,9 @@ const router = express.Router();
 router.post('/signup', authController.adminSignup);
 router.post('/login', authController.adminLogin);
 
+// Protect all routes after this middleware
+router.use(authController.protect);
+
 // User management routes
 router.route('/users')
   .get(userController.getAllUsers);
