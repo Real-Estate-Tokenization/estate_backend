@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isRejected: {
+    type: Boolean,
+    default: false
+  },
   signature: {
     type: String,
     required: [true, 'Please provide a signature']
