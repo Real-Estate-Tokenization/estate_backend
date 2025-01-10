@@ -16,6 +16,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check route
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Estate Backend API is running'
+  });
+});
+
 // Routes
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/node', nodeRoutes);
@@ -45,9 +53,21 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log('DB connection successful!'));
+  .then(() => console.log('DB connection successful!'))
+  .catch(err => console.error('DB connection error:', err));
 
-const port = process.env.PORT || 9000;
-app.listen(port, () => {
+const port = process.env.PORT || 3000;
+const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', err => {
+  console.log('UNHANDLED REJECTION! Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+module.exports = app;
