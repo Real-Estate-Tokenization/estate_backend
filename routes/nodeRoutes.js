@@ -10,6 +10,9 @@ const router = express.Router();
 router.post('/signup', authController.nodeSignup);
 router.post('/login', authController.nodeLogin);
 
+// Protected routes - requires authentication
+router.patch('/update-blockchain-info', protectNode, authController.updateBlockchainInfo);
+
 // Protected routes - only accessible by approved nodes
 router.get('/users', protectNode, userController.getAllUsers);
 router.route('/users/:id')

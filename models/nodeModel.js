@@ -22,22 +22,23 @@ const nodeSchema = new mongoose.Schema({
   },
   ethAddress: {
     type: String,
-    required: [true, 'Please provide an ETH address']
+    required: false
   },
   vaultAddress: {
     type: String,
-    required: [true, 'Please provide a vault address']
+    required: false
   },
   ensName: {
-    type: String
+    type: String,
+    required: false
   },
   paymentToken: {
     type: String,
-    required: [true, 'Please provide a payment token']
+    required: false
   },
   signature: {
     type: String,
-    required: [true, 'Please provide a signature']
+    required: false
   },
   isApproved: {
     type: Boolean,

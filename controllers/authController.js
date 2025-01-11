@@ -54,12 +54,7 @@ exports.nodeSignup = catchAsync(async (req, res, next) => {
   const newNode = await Node.create({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
-    ethAddress: req.body.ethAddress,
-    vaultAddress: req.body.vaultAddress,
-    ensName: req.body.ensName,
-    paymentToken: req.body.paymentToken,
-    signature: req.body.signature
+    password: req.body.password
   });
 
   createSendToken(newNode, 201, res);
@@ -104,4 +99,40 @@ exports.protect = catchAsync(async (req, res, next) => {
   // Grant access to protected route
   req.admin = currentAdmin;
   next();
+});
+
+exports.updateBlockchainInfo = catchAsync(async (req, res, next) => {
+  // 1) Check if all required blockchain fields are provided
+  const { ethAddress, vaultAddress, paymentToken, signature } = req.body;
+  
+  if (!ethAddress || !vaultAddress || !paymentToken || !signature) {
+    return next(new AppError('Please provide all required blockchain information', 400));
+  }
+
+  // 2) Update the node with blockchain information
+  const updatedNode = await Node.findByIdAndUpdate(
+    req.node._id,
+    {
+      ethAddress,
+      vaultAddress,
+      ensName: req.body.ensName, // optional field
+      paymentToken,
+      signature
+    },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  if (!updatedNode) {
+    return next(new AppError('No node found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      node: updatedNode
+    }
+  });
 });
