@@ -40,6 +40,10 @@ const nodeSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  autoUpdateEnabled: {
+    type: Boolean,
+    default: false
+  },
   isApproved: {
     type: Boolean,
     default: false

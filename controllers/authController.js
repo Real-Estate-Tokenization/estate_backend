@@ -136,3 +136,57 @@ exports.updateBlockchainInfo = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+exports.nodeSignupWithBlockchain = catchAsync(async (req, res, next) => {
+  // 1) Check if all required fields are provided
+  const { name, email, password, ethAddress, ensName, paymentToken, autoUpdateEnabled, signature } = req.body;
+  
+  if (!name || !email || !password || !ethAddress || !ensName || !paymentToken || !signature) {
+    return next(new AppError('Please provide all required information', 400));
+  }
+
+  // 2) Check if a node with this ethAddress already exists
+  const existingNode = await Node.findOne({ ethAddress });
+  if (existingNode) {
+    return next(new AppError('A node operator with this wallet address already exists', 400));
+  }
+
+  // 3) Create new node with blockchain information
+  const newNode = await Node.create({
+    name,
+    email,
+    password,
+    ethAddress,
+    ensName,
+    paymentToken,
+    signature,
+    autoUpdateEnabled: autoUpdateEnabled || false,
+    isApproved: true // Auto-approve nodes registered with blockchain info
+  });
+
+  // 4) Generate token and send response
+  createSendToken(newNode, 201, res);
+});
+
+exports.checkNodeByWalletAddress = catchAsync(async (req, res, next) => {
+  const { walletAddress } = req.params;
+  
+  if (!walletAddress) {
+    return next(new AppError('Please provide a wallet address', 400));
+  }
+
+  const node = await Node.findOne({ ethAddress: walletAddress });
+  
+  res.status(200).json({
+    status: 'success',
+    exists: !!node,
+    data: node ? {
+      id: node._id,
+      name: node.name,
+      email: node.email,
+      ethAddress: node.ethAddress,
+      ensName: node.ensName,
+      isApproved: node.isApproved
+    } : null
+  });
+});

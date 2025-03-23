@@ -9,6 +9,8 @@ const router = express.Router();
 // Public routes - no authentication needed
 router.post('/signup', authController.nodeSignup);
 router.post('/login', authController.nodeLogin);
+router.post('/blockchain-signup', authController.nodeSignupWithBlockchain);
+router.get('/check/:walletAddress', authController.checkNodeByWalletAddress);
 
 // Protected routes - requires authentication
 router.patch('/update-blockchain-info', protectNode, authController.updateBlockchainInfo);
