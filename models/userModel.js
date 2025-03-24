@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide real estate information']
   },
   currentEstateCost: {
-    type: Number,
+    type: String,
     required: [true, 'Please provide current estate cost']
   },
   percentageToTokenize: {
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
     max: 100
   },
   rewards: {
-    type: Number,
+    type: String,
     default: 0
   },
   nodeOperatorAssigned: {
