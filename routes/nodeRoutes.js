@@ -17,6 +17,7 @@ router.patch('/update-blockchain-info', protectNode, authController.updateBlockc
 
 // Protected routes - only accessible by approved nodes
 router.get('/users', protectNode, userController.getAllUsers);
+router.get('/filtered-users', protectNode, userController.getAllUsersWithFilters);
 router.route('/users/:id')
   .get(protectNode, userController.getUser)
   .patch(protectNode, userController.updateUser);
