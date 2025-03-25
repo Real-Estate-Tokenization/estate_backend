@@ -138,34 +138,40 @@ exports.updateBlockchainInfo = catchAsync(async (req, res, next) => {
 });
 
 exports.nodeSignupWithBlockchain = catchAsync(async (req, res, next) => {
-  // 1) Check if all required fields are provided
-  const { name, email, password, ethAddress, ensName, paymentToken, autoUpdateEnabled, signature } = req.body;
-  
-  if (!name || !email || !password || !ethAddress || !ensName || !paymentToken || !signature) {
-    return next(new AppError('Please provide all required information', 400));
+  try {
+    const {
+      name,
+      email,
+      password,
+      autoUpdateEnabled,
+      ensName,
+      ethAddress,
+      paymentToken,
+      signature,
+      vaultAddress,
+    } = req.body;
+
+    // Create new node operator with isApproved set to false by default
+    const newNodeOperator = await NodeOperator.create({
+      name,
+      email,
+      password,
+      autoUpdateEnabled,
+      ensName,
+      ethAddress,
+      paymentToken,
+      signature,
+      vaultAddress,
+      isApproved: false
+    });
+
+    createSendToken(newNodeOperator, 201, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
-
-  // 2) Check if a node with this ethAddress already exists
-  const existingNode = await Node.findOne({ ethAddress });
-  if (existingNode) {
-    return next(new AppError('A node operator with this wallet address already exists', 400));
-  }
-
-  // 3) Create new node with blockchain information
-  const newNode = await Node.create({
-    name,
-    email,
-    password,
-    ethAddress,
-    ensName,
-    paymentToken,
-    signature,
-    autoUpdateEnabled: autoUpdateEnabled || false,
-    isApproved: true // Auto-approve nodes registered with blockchain info
-  });
-
-  // 4) Generate token and send response
-  createSendToken(newNode, 201, res);
 });
 
 exports.checkNodeByWalletAddress = catchAsync(async (req, res, next) => {
