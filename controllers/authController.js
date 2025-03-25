@@ -152,7 +152,7 @@ exports.nodeSignupWithBlockchain = catchAsync(async (req, res, next) => {
     } = req.body;
 
     // Create new node operator with isApproved set to false by default
-    const newNodeOperator = await NodeOperator.create({
+    const newNodeOperator = await Node.create({
       name,
       email,
       password,
