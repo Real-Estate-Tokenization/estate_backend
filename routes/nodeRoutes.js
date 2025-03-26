@@ -3,6 +3,7 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const nodeController = require('../controllers/nodeController');
 const { protectNode } = require('../middleware/nodeAuth');
+const apiKeyMiddleware = require('../middleware/apiKeyMiddleware');
 
 const router = express.Router();
 
@@ -15,6 +16,9 @@ router.get('/check/:walletAddress', authController.checkNodeByWalletAddress);
 
 // Protected routes - requires authentication
 router.patch('/update-blockchain-info', protectNode, authController.updateBlockchainInfo);
+
+// api key required routes
+router.get('/get-approved-nodes', apiKeyMiddleware, nodeController.getApprovedNodes)
 
 // Protected routes - only accessible by approved nodes
 router.get('/users', protectNode, userController.getAllUsers);
