@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema({
   },
   signature: {
     type: String,
-    required: [true, 'Please provide a signature']
+    // required: [true, 'Please provide a signature']
   }
 }, {
   timestamps: true
