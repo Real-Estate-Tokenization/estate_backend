@@ -16,7 +16,12 @@ exports.createUser = catchAsync(async (req, res, next) => {
     realEstateInfo: req.body.realEstateInfo,
     currentEstateCost: req.body.currentEstateCost,
     percentageToTokenize: req.body.percentageToTokenize,
-    signature: req.body.signature
+    rewards: "0",
+    nodeOperatorAssigned: req.body.nodeOperatorAssigned,
+    isVerified: false,
+    isRejected: false,
+    token: req.body.token
+    // signature: req.body.signature
   });
 
   res.status(201).json({
