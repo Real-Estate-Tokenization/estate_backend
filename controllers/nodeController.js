@@ -30,6 +30,21 @@ exports.getNode = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getApprovedNodes = catchAsync(async (req, res, next) => {
+  const node = await Node.find({ isApproved: true });
+
+  if (!node) {
+    return next(new AppError('No node found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      node
+    }
+  });
+});
+
 exports.updateNode = catchAsync(async (req, res, next) => {
   const node = await Node.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
