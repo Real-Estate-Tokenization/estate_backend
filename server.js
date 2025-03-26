@@ -17,7 +17,7 @@ app.use(cors({
   origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://estate1729.loca.lt', 'https://estate1729.loca.lt:3000', 'estate1729.loca.lt'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
 }));
 app.use(express.json());
 
