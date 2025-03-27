@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/register', userController.createUser);
 router.get('/profile/:id', apiKeyMiddleware, userController.getUser);
-router.patch('/profile/:id', userController.updateUser);
+router.patch('/update/:id', apiKeyMiddleware, userController.updateUser);
 
 // New routes
 router.get('/all',apiKeyMiddleware , userController.getAllUsersWithFilters);
