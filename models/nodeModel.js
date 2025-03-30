@@ -47,6 +47,10 @@ const nodeSchema = new mongoose.Schema({
   isApproved: {
     type: Boolean,
     default: false
+  },
+  claimedRewards: {
+    type: String,
+    default: "0"
   }
 }, {
   timestamps: true

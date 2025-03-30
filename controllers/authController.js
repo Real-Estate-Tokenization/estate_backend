@@ -162,7 +162,8 @@ exports.nodeSignupWithBlockchain = catchAsync(async (req, res, next) => {
       paymentToken,
       signature,
       vaultAddress,
-      isApproved: false
+      isApproved: false,
+      claimedRewards: "0"
     });
 
     createSendToken(newNodeOperator, 201, res);
