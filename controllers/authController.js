@@ -193,7 +193,8 @@ exports.checkNodeByWalletAddress = catchAsync(async (req, res, next) => {
       email: node.email,
       ethAddress: node.ethAddress,
       ensName: node.ensName,
-      isApproved: node.isApproved
+      isApproved: node.isApproved,
+      claimedRewards: node.claimedRewards,
     } : null
   });
 });
