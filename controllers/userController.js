@@ -150,3 +150,51 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
     data: null
   });
 });
+
+exports.addCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
+  const user = await User.findOne({ ethAddress: req.params.ethAddress });
+  if (!user) {
+    return next(new AppError('No user found with that ETH address', 404));
+  }
+
+  const collateralDeposited = req.body.collateralDeposited + user.collateralDeposited;
+  const updatedUser = await User.findByIdAndUpdate(user._id, { collateralDeposited }, {
+    new: true,
+    runValidators: true
+  });
+
+  if (!updatedUser) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser
+    }
+  });
+});
+
+exports.subtractCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
+  const user = await User.findOne({ ethAddress: req.params.ethAddress });
+  if (!user) {
+    return next(new AppError('No user found with that ETH address', 404));
+  }
+  
+  const collateralDeposited = user.collateralDeposited - req.body.collateralDeposited;
+  const updatedUser = await User.findByIdAndUpdate(user._id, { collateralDeposited }, {
+    new: true,
+    runValidators: true
+  });
+
+  if (!updatedUser) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      updatedUser
+    }
+  });
+});

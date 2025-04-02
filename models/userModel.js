@@ -58,6 +58,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Payment token for TRE is required']
   },
+  collateralDeposited: {
+    type: String,
+    default: 0
+  },
   nodeOperatorAssigned: {
     type: String
   },
