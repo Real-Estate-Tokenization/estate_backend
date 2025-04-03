@@ -181,7 +181,7 @@ exports.subtractCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
     return next(new AppError('No user found with that ETH address', 404));
   }
   
-  const collateralDeposited = user.collateralDeposited - req.body.collateralDeposited;
+  const collateralDeposited = user.collateralDeposited - req.body.collateralWithdrawn;
   const updatedUser = await User.findByIdAndUpdate(user._id, { collateralDeposited }, {
     new: true,
     runValidators: true
