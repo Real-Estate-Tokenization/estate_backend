@@ -20,7 +20,8 @@ exports.createUser = catchAsync(async (req, res, next) => {
     nodeOperatorAssigned: req.body.nodeOperatorAssigned,
     isVerified: false,
     isRejected: false,
-    token: req.body.token
+    token: req.body.token,
+    tokenSymbol: req.body.tokenSymbol
     // signature: req.body.signature
   });
 
