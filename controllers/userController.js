@@ -21,7 +21,7 @@ exports.createUser = catchAsync(async (req, res, next) => {
     isVerified: false,
     isRejected: false,
     token: req.body.token,
-    tokenSymbol: req.body.tokenSymbol
+    tokenSymbol: req.body.tokenSymbol || ""
     // signature: req.body.signature
   });
 
