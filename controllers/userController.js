@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const UserTokenizedPosition = require('../model/userTokenizedPositionModel')
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -152,7 +153,7 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.addCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
+exports.addCollateralOnEstateOwner = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ ethAddress: req.params.ethAddress });
   if (!user) {
     return next(new AppError('No user found with that ETH address', 404));
@@ -176,12 +177,12 @@ exports.addCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
   });
 });
 
-exports.subtractCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
+exports.subtractCollateralOnEstateOwner = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ ethAddress: req.params.ethAddress });
   if (!user) {
     return next(new AppError('No user found with that ETH address', 404));
   }
-  
+
   const collateralDeposited = user.collateralDeposited - req.body.collateralWithdrawn;
   const updatedUser = await User.findByIdAndUpdate(user._id, { collateralDeposited }, {
     new: true,
@@ -199,3 +200,90 @@ exports.subtractCollateralOnEstateOwner = catchAsync(async(req, res, next) => {
     }
   });
 });
+
+exports.upsertTokenizedPosition = catchAsync(async (req, res, next) => {
+  const {
+    userAddress,
+    tokenizedRealEstateAddress,
+    collateralDeposited,
+    treMinted,
+    rewardsCollected,
+    paymentToken,
+    paymentTokenSymbol
+  } = req.body;
+
+  // upsert data
+  const userTokenizedPosition =  await UserTokenizedPosition.findOneAndUpdate(
+    { userAddress, tokenizedRealEstateAddress },
+    {
+      // tokenizedRealEstateAddress,
+      collateralDeposited,
+      treMinted,
+      rewardsCollected,
+      paymentToken,
+      paymentTokenSymbol
+    },
+    {
+      new: true,
+      upsert: true,
+      runValidators: true
+    }
+  )
+
+  if (!userTokenizedPosition) {
+    return next(new AppError('Error in Upserting Position', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      userTokenizedPosition
+    }
+  });
+})
+
+exports.getAllUserTokenizedPosition = catchAsync(async (req, res, next) => {
+  const tokenizedRealEstateAddress = req.query?.tokenizedRealEstateAddress;
+  const filter = {};
+  if (tokenizedRealEstateAddress) {
+    filter.tokenizedRealEstateAddress = tokenizedRealEstateAddress;
+  }
+  const allUserTokenizedPosition = await UserTokenizedPosition.find(filter);
+
+  if (!allUserTokenizedPosition) {
+    return next(new AppError('No positions found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      allUserTokenizedPosition
+    }
+  });
+})
+
+exports.getUserTokenizedPosition = catchAsync(async (req, res, next) => {
+  const tokenizedRealEstateAddress = req.query?.tokenizedRealEstateAddress;
+  const userAddress = req.query?.userAddress;
+
+  const filter = {
+    userAddress
+  };
+
+  if (tokenizedRealEstateAddress) {
+    filter.tokenizedRealEstateAddress = tokenizedRealEstateAddress;
+  }
+
+  const userTokenizedPosition = await UserTokenizedPosition.find(filter);
+
+  if (!userTokenizedPosition) {
+    return next(new AppError('No positions found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      userTokenizedPosition
+    }
+  });
+})
