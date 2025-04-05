@@ -1,5 +1,5 @@
 const User = require('../models/userModel');
-const UserTokenizedPosition = require('../model/userTokenizedPositionModel')
+const UserTokenizedPosition = require('../models/TokenizedPositionsModel')
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
