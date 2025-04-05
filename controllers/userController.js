@@ -205,24 +205,13 @@ exports.upsertTokenizedPosition = catchAsync(async (req, res, next) => {
   const {
     userAddress,
     tokenizedRealEstateAddress,
-    collateralDeposited,
-    treMinted,
-    rewardsCollected,
-    paymentToken,
-    paymentTokenSymbol
+    ...remainingData
   } = req.body;
 
   // upsert data
   const userTokenizedPosition =  await UserTokenizedPosition.findOneAndUpdate(
     { userAddress, tokenizedRealEstateAddress },
-    {
-      // tokenizedRealEstateAddress,
-      collateralDeposited,
-      treMinted,
-      rewardsCollected,
-      paymentToken,
-      paymentTokenSymbol
-    },
+    remainingData,
     {
       new: true,
       upsert: true,
