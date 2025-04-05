@@ -23,7 +23,7 @@ const userTokenizedPositionSchema = new mongoose.Schema({
     default: 0
   },
   paymentToken: {
-    type: Number,
+    type: String,
     default: 0
   },
   paymentTokenSymbol: {
