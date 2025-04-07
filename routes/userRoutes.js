@@ -15,6 +15,10 @@ router.post('/upsert-tokenized-position', apiKeyMiddleware, userController.upser
 router.get('/get-all-user-tokenized-position', apiKeyMiddleware, userController.getAllUserTokenizedPosition);
 router.get('/get-user-tokenized-position', apiKeyMiddleware, userController.getUserTokenizedPosition);
 
+// tokenized position log
+router.post('/tre-log/add', apiKeyMiddleware, userController.addTreLog);
+router.get('/tre-log/detail', apiKeyMiddleware, userController.getTreLog);
+
 // New routes
 router.get('/all',apiKeyMiddleware , userController.getAllUsersWithFilters);
 router.get('/eth/:ethAddress', apiKeyMiddleware, userController.getUserByEthAddress);

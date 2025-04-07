@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
-const UserTokenizedPosition = require('../models/TokenizedPositionsModel')
+const UserTokenizedPosition = require('../models/TokenizedPositionsModel');
+const UserPositionsLog = require('../models/userPositionsLogModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -55,7 +56,7 @@ exports.getAllUsersWithFilters = catchAsync(async (req, res, next) => {
   // Advanced filtering
   let queryStr = JSON.stringify(queryObj);
   queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-  
+
   let query = User.find(JSON.parse(queryStr));
 
   // Sorting
@@ -209,7 +210,7 @@ exports.upsertTokenizedPosition = catchAsync(async (req, res, next) => {
   } = req.body;
 
   // upsert data
-  const userTokenizedPosition =  await UserTokenizedPosition.findOneAndUpdate(
+  const userTokenizedPosition = await UserTokenizedPosition.findOneAndUpdate(
     { userAddress, tokenizedRealEstateAddress },
     remainingData,
     {
@@ -273,6 +274,42 @@ exports.getUserTokenizedPosition = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       userTokenizedPosition
+    }
+  });
+})
+
+exports.addTreLog = catchAsync(async (req, res, next) => {
+  const data = req.body;
+  const _userPositionsLog = await UserPositionsLog.create(data);
+
+  if (!_userPositionsLog) {
+    return next(new AppError('Failed to create TRE Log', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      userPositionsLog: _userPositionsLog
+    }
+  });
+})
+
+exports.getTreLog = catchAsync(async (req, res, next) => {
+  const filter = {};
+  if (req.query?.tokenizedRealEstateAddress) {
+    filter.tokenizedRealEstateAddress = req.query?.tokenizedRealEstateAddress;
+  }
+
+  const _treLogs = UserPositionsLog.find(filter);
+
+  if (!_treLogs) {
+    return next(new AppError('Error fetching TRE Logs', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      treLogs: _treLogs
     }
   });
 })
