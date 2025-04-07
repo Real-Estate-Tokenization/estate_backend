@@ -300,7 +300,7 @@ exports.getTreLog = catchAsync(async (req, res, next) => {
     filter.tokenizedRealEstateAddress = req.query?.tokenizedRealEstateAddress;
   }
 
-  const _treLogs = UserPositionsLog.find(filter);
+  const _treLogs = await UserPositionsLog.find(filter);
 
   if (!_treLogs) {
     return next(new AppError('Error fetching TRE Logs', 404));
