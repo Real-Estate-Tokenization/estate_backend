@@ -299,6 +299,9 @@ exports.getTreLog = catchAsync(async (req, res, next) => {
   if (req.query?.tokenizedRealEstateAddress) {
     filter.tokenizedRealEstateAddress = req.query?.tokenizedRealEstateAddress;
   }
+  if (req.query?.userAddress) {
+    filter.userAddress = req.query?.userAddress;
+  }
 
   const _treLogs = await UserPositionsLog.find(filter);
 
