@@ -9,9 +9,6 @@ const crossChainTxnSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  transactionChainId: {
-    type: String
-  },
   transactionType: {
     type: String,
     enum: ["TRE_BUY", "TRE_SELL"],
