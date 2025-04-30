@@ -4,6 +4,7 @@ const UserPositionsLog = require('../models/userPositionsLogModel');
 const CrossChainTxn = require('../models/crossChainTxnModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const axios = require('axios');
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
@@ -319,7 +320,10 @@ exports.getTreLog = catchAsync(async (req, res, next) => {
 })
 
 exports.logCrossChainTxn = catchAsync(async (req, res, next) => {
-  const data = req.body;
+  const ccipMessageResponse = await axios.get(`https://ccip.chain.link/api/h/atlas/search?msgIdOrTxnHash=${req.body.transactionHash}`);
+  const ccipLink = `https://ccip.chain.link/#/side-drawer/msg/${ccipMessageResponse.data.transactionHash[0].messageId}`;
+
+  const data = { ...req.body, ccipLink };
   const _crossChainTxn = await CrossChainTxn.create(data);
 
   if (!_crossChainTxn) {
