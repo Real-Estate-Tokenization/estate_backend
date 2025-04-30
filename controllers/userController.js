@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const UserTokenizedPosition = require('../models/TokenizedPositionsModel');
 const UserPositionsLog = require('../models/userPositionsLogModel');
+const CrossChainTxn = require('../models/crossChainTxnModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -313,6 +314,45 @@ exports.getTreLog = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       treLogs: _treLogs
+    }
+  });
+})
+
+exports.logCrossChainTxn = catchAsync(async (req, res, next) => {
+  const data = req.body;
+  const _crossChainTxn = await CrossChainTxn.create(data);
+
+  if (!_crossChainTxn) {
+    return next(new AppError('Failed to log Cross Chain Txn', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      crossChainTxn: _crossChainTxn
+    }
+  });
+})
+
+exports.getCrossChainTxn = catchAsync(async (req, res, next) => {
+  const filter = {};
+  if (req.query?.tokenizedRealEstateAddress) {
+    filter.tokenizedRealEstateAddress = req.query?.tokenizedRealEstateAddress;
+  }
+  if (req.query?.userAddress) {
+    filter.userAddress = req.query?.userAddress;
+  }
+
+  const crossChainTxns = await CrossChainTxn.find(filter);
+
+  if (!crossChainTxns) {
+    return next(new AppError('Error fetching Cross Chain Txns', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      crossChainTxns: crossChainTxns
     }
   });
 })

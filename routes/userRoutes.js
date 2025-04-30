@@ -19,6 +19,10 @@ router.get('/get-user-tokenized-position', apiKeyMiddleware, userController.getU
 router.post('/tre-log/add', apiKeyMiddleware, userController.addTreLog);
 router.get('/tre-log/detail', apiKeyMiddleware, userController.getTreLog);
 
+// cross chain txn log
+router.post('/cross-chain-txn/add', apiKeyMiddleware, userController.logCrossChainTxn);
+router.get('/cross-chain-txn/detail', apiKeyMiddleware, userController.getCrossChainTxn);
+
 // New routes
 router.get('/all',apiKeyMiddleware , userController.getAllUsersWithFilters);
 router.get('/eth/:ethAddress', apiKeyMiddleware, userController.getUserByEthAddress);
